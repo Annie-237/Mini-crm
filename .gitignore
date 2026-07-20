@@ -1,0 +1,19 @@
+# Dépendances
+node_modules/
+bin/
+obj/
+
+# Build
+dist/
+build/
+
+# Environnement
+.env
+*.env.local
+
+# Éditeur / Système
+.vscode/
+.DS_Store
+
+# Logs
+*.log
