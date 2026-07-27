@@ -5,11 +5,14 @@ import { getFactures } from "./services/factureService";
 import ClientForm from "./components/ClientForm";
 import ProjetForm from "./components/ProjetForm";
 import FactureForm from "./components/FactureForm";
+import "./App.css";
+import StatutBadge from "./components/StatutBadge";
 
 function App() {
   const [clients, setClients] = useState([]);
   const [projets, setProjets] = useState([]);
   const [factures, setFactures] = useState([]);
+  const [activeTab, setActiveTab] = useState("clients");
 
   useEffect(() => {
     getClients().then(setClients);
@@ -40,44 +43,72 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Mini-CRM</h1>
+    <div className="app">
+      <aside className="sidebar">
+        <h1>Mini-CRM</h1>
+        <button
+          className={`nav-item ${activeTab === "clients" ? "active" : ""}`}
+          onClick={() => setActiveTab("clients")}
+        >
+          Clients
+        </button>
+        <button
+          className={`nav-item ${activeTab === "projets" ? "active" : ""}`}
+          onClick={() => setActiveTab("projets")}
+        >
+          Projets
+        </button>
+        <button
+          className={`nav-item ${activeTab === "factures" ? "active" : ""}`}
+          onClick={() => setActiveTab("factures")}
+        >
+          Factures
+        </button>
+      </aside>
 
-      <section>
-        <ClientForm onClientCreated={handleClientCreated} />
-        <h2>Clients</h2>
-        <ul>
-          {clients.map((client) => (
-            <li key={client.id}>
-              {client.nom} — {client.courriel}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <main className="content">
+        {activeTab === "clients" && (
+          <>
+            <h2>Clients</h2>
+            <ClientForm onClientCreated={handleClientCreated} />
+            <ul>
+              {clients.map((client) => (
+                <li key={client.id}>
+                  {client.nom} — {client.courriel}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
 
-      <section>
-        <ProjetForm clients={clients} onProjetCreated={handleProjetCreated} />
-        <h2>Projets</h2>
-        <ul>
-          {projets.map((projet) => (
-            <li key={projet.id}>
-              {projet.titre} — {getNomClient(projet.clientId)} — {projet.statut}
-            </li>
-          ))}
-        </ul>
-      </section>
+        {activeTab === "projets" && (
+          <>
+            <h2>Projets</h2>
+            <ProjetForm clients={clients} onProjetCreated={handleProjetCreated} />
+            <ul>
+  {projets.map((projet) => (
+    <li key={projet.id}>
+      {projet.titre} — {getNomClient(projet.clientId)} — <StatutBadge statut={projet.statut} />
+    </li>
+  ))}
+            </ul>
+          </>
+        )}
 
-      <section>
-        <FactureForm projets={projets} onFactureCreated={handleFactureCreated} />
-        <h2>Factures</h2>
-        <ul>
-          {factures.map((facture) => (
-            <li key={facture.id}>
-              {getTitreProjet(facture.projetId)} — {facture.montant} $ — {facture.statut}
-            </li>
-          ))}
-        </ul>
-      </section>
+        {activeTab === "factures" && (
+          <>
+            <h2>Factures</h2>
+            <FactureForm projets={projets} onFactureCreated={handleFactureCreated} />
+            <ul>
+  {factures.map((facture) => (
+    <li key={facture.id}>
+      {getTitreProjet(facture.projetId)} — {facture.montant} $ — <StatutBadge statut={facture.statut} />
+    </li>
+  ))}
+</ul>
+          </>
+        )}
+      </main>
     </div>
   );
 }
